@@ -63,5 +63,5 @@ func createFile(filepath string) {
 
 // getNow gets the current UTC timestamp.
 func getNow() time.Time {
-  return time.Now().UTC()
+  return time.Now()
 }
