@@ -1,8 +1,15 @@
 package heartbeat
 
 import (
+  "fmt"
   "os"
+  "strconv"
   "time"
+)
+
+const (
+  FileKey     = "HEARTBEAT_FILE"
+  IntervalKey = "HEARTBEAT_INTERVAL"
 )
 
 // RunFileHeartbeat loops heartbeat to file emition in
@@ -23,6 +30,26 @@ func EmitToFile(filepath string) {
     log.Println(err)
     createFile(filepath)
   }
+}
+
+// Config configuration for running file heartbeat.
+type Config struct {
+  File     string `json:"file"`
+  Interval int    `json:"interval"`
+}
+
+// NewConfigFromEnv reads heartbeat configuration from environment variables
+func NewConfigFromEnv() (Config, error) {
+  config := Config{File: os.Getenv(FileKey)}
+  if config.File == "" {
+    return config, fmt.Error("Heartbeat Config.File not set")
+  }
+  interval, err := strconv.Atoi(os.Getenv(IntervalKey))
+  if err != nil {
+    return config, err
+  }
+  config.Interval = interval
+  return config, nil
 }
 
 // createFile creates a new file named as specified by the filepath.
